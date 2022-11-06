@@ -40,7 +40,6 @@ def book(competition,club):
                                       "%Y-%m-%d %H:%M:%S")
         now = datetime.now()
         available = comp_time >= now
-        print(available, comp_time, now)
         foundCompetition["available"] = available
         return render_template('booking.html',club=foundClub,competition=foundCompetition)
     else:
