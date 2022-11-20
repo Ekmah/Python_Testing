@@ -8,12 +8,11 @@ class TestIssue4:
 
     @staticmethod
     def assertions(before_points, after_points, before_places,
-                   after_places, chosen_points):
+                   after_places):
         before_places = int(before_places)
         after_places = int(after_places)
         before_points = int(before_points)
         after_points = int(after_points)
-        chosen_points = int(chosen_points)
         asserts = (
             ((before_places - after_places) == (before_points - after_points)),
             # if false, compets and clubs have not been deduced the same number
@@ -39,7 +38,7 @@ class TestIssue4:
         after_points = clubs[1]["points"]
 
         assert self.assertions(before_points, after_points, before_places,
-                               after_places, chosen_points)
+                               after_places)
 
     def test_more_than_12(self, client):
         route = "/purchasePlaces"
@@ -55,4 +54,4 @@ class TestIssue4:
         after_points = clubs[1]["points"]
 
         assert self.assertions(before_points, after_points, before_places,
-                               after_places, chosen_points)
+                               after_places)
