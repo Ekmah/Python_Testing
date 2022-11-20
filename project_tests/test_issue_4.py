@@ -15,98 +15,21 @@ class TestIssue4:
         after_points = int(after_points)
         chosen_points = int(chosen_points)
         asserts = (
-            ((before_places - after_places) <= before_points),
-            # if false, has chosen more place than available points
-            ((before_places - after_places) == chosen_points),
-            # if false, places have not been deduced properly from competition
-            ((before_points - after_points) == chosen_points),
-            # if false, places have not been deduced properly from clubs
             ((before_places - after_places) == (before_points - after_points)),
-            # if false, competitions and clubs have not been deduced the same n
+            # if false, compets and clubs have not been deduced the same number
             ((before_places - after_places) == (before_points - after_points)
              and (before_places - after_places) <= 12),
             # if false, more than 12 places/points have been used
-            after_places >= 0,
-            # if false, places are in the negatives
-            after_points >= 0,
-            # if false, points are in the negatives
-            (before_places == after_places and before_points == after_points
-             and chosen_points == 0)
-            # If no places are taken, no place/points should be deducted
         )
         return asserts
-
-    def test_more_than_available_points(self, client):
-        route = "/purchasePlaces"
-        before_points = clubs[1]["points"]
-        before_places = competitions[1]["numberOfPlaces"]
-        chosen_points = int(before_points) + 1
-        response = client.post(route, data={
-            "club": clubs[1]["name"],
-            "competition": competitions[1]["name"],
-            "places": chosen_points,
-        })
-        after_places = competitions[1]["numberOfPlaces"]
-        after_points = clubs[1]["points"]
-
-        assert self.assertions(before_points, after_points, before_places,
-                               after_places, chosen_points)
-
-    def test_more_than_available_places(self, client):
-        route = "/purchasePlaces"
-        before_points = clubs[1]["points"]
-        before_places = competitions[1]["numberOfPlaces"]
-        chosen_points = int(before_places) + 1
-        response = client.post(route, data={
-            "club": clubs[1]["name"],
-            "competition": competitions[1]["name"],
-            "places": chosen_points,
-        })
-        after_places = competitions[1]["numberOfPlaces"]
-        after_points = clubs[1]["points"]
-
-        assert self.assertions(before_points, after_points, before_places,
-                               after_places, chosen_points)
 
     def test_correct_amount(self, client):
         route = "/purchasePlaces"
         before_points = clubs[1]["points"]
         before_places = competitions[1]["numberOfPlaces"]
         chosen_points = int(before_points) - 1
-        if chosen_points < 0:
+        if chosen_points < 0 or chosen_points > 12:
             chosen_points = 0
-        response = client.post(route, data={
-            "club": clubs[1]["name"],
-            "competition": competitions[1]["name"],
-            "places": chosen_points,
-        })
-        after_places = competitions[1]["numberOfPlaces"]
-        after_points = clubs[1]["points"]
-
-        assert self.assertions(before_points, after_points, before_places,
-                               after_places, chosen_points)
-
-    def test_null_amount(self, client):
-        route = "/purchasePlaces"
-        before_points = clubs[1]["points"]
-        before_places = competitions[1]["numberOfPlaces"]
-        chosen_points = 0
-        response = client.post(route, data={
-            "club": clubs[1]["name"],
-            "competition": competitions[1]["name"],
-            "places": chosen_points,
-        })
-        after_places = competitions[1]["numberOfPlaces"]
-        after_points = clubs[1]["points"]
-
-        assert self.assertions(before_points, after_points, before_places,
-                               after_places, chosen_points)
-
-    def test_negative_amount(self, client):
-        route = "/purchasePlaces"
-        before_points = clubs[1]["points"]
-        before_places = competitions[1]["numberOfPlaces"]
-        chosen_points = -1
         response = client.post(route, data={
             "club": clubs[1]["name"],
             "competition": competitions[1]["name"],
