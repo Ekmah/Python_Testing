@@ -1,8 +1,5 @@
 from project_tests.conftest import *
 
-# Assert1: points clubs after < points clubs before if reservation > 0.
-# Assert2: Competition place taken == difference club points before/after
-
 
 class TestIssue4:
 
