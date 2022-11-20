@@ -25,3 +25,11 @@ class TestIssue1:
             "email": email,
         })
         assert response.status_code == 200
+
+    def test_other_type(self, client):
+        email = 1
+        route = "/showSummary"
+        response = client.post(route, data={
+            "email": email,
+        })
+        assert response.status_code == 200
