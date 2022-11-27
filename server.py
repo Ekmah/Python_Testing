@@ -68,8 +68,10 @@ def book(competition, club):
                                       "%Y-%m-%d %H:%M:%S")
         now = datetime.now()
         available = comp_time >= now
-        foundCompetition["available"] = available
-        return render_template('booking.html', club=foundClub, competition=foundCompetition)
+        if not available:
+            return "Sorry, that competition has passed."
+        else:
+            return render_template('booking.html', club=foundClub, competition=foundCompetition)
     else:
         flash("Something went wrong-please try again")
         return render_template('welcome.html', club=club, competitions=competitions)
