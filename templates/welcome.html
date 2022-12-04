@@ -5,41 +5,45 @@
     <title>Summary | GUDLFT Registration</title>
 </head>
 <body>
-        <h2>Welcome, {{club['email']}} </h2><a href="{{url_for('logout')}}">Logout</a>
+    <h2>Welcome, {{club['email']}} </h2><a href="{{url_for('logout')}}">Logout</a>
 
     {% with messages = get_flashed_messages()%}
     {% if messages %}
-        <ul>
-       {% for message in messages %}
-            <li>{{message}}</li>
+    <ul>
+        {% for message in messages %}
+        <li>{{message}}</li>
         {% endfor %}
-       </ul>
+    </ul>
     {% endif%}
     Points available: {{club['points']}}
-    <h3>Competitions:</h3>
-    <ul>
-        {% for comp in competitions%}
-        <li>
-            {{comp['name']}}<br />
-            Date: {{comp['date']}}</br>
-            Number of Places: {{comp['numberOfPlaces']}}
-            {%if comp['numberOfPlaces']|int >0%}
-            <a href="{{ url_for('book',competition=comp['name'],club=club['name']) }}">Book Places</a>
-            {%endif%}
-        </li>
-        <hr />
-        {% endfor %}
-    </ul>
-    <h3>Clubs:</h3>
-    <ul>
-        {% for club in clubs%}
-        <li>
-            {{club['name']}}<br />
-            Number of Points: {{club['points']}}
-        </li>
-        <hr/>
-        {% endfor %}
-    </ul>
+    <div id="competitions">
+        <h3>Competitions:</h3>
+        <ul>
+            {% for comp in competitions%}
+            <li>
+                {{comp['name']}}<br>
+                Date: {{comp['date']}}<br>
+                Number of Places: {{comp['numberOfPlaces']}}
+                {%if comp['numberOfPlaces']|int >0%}
+                <a href="{{ url_for('book',competition=comp['name'],club=club['name']) }}">Book Places</a>
+                {%endif%}
+                <hr>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div id="clubs">
+        <h3>Clubs:</h3>
+        <ul>
+            {% for club in clubs%}
+            <li>
+                {{club['name']}}<br>
+                Number of Points: {{club['points']}}
+                <hr>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
     {%endwith%}
 
 </body>
