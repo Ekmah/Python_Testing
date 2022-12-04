@@ -37,22 +37,26 @@ def showSummary():
 
 
 @app.route('/book/<competition>/<club>')
-def book(competition,club):
-    foundClub = [c for c in clubs if c['name'] == club][0]
-    foundCompetition = [c for c in competitions if c['name'] == competition][0]
-    if foundClub and foundCompetition:
-        possible_places = min(int(foundClub['points']), 12)
-        comp_time = datetime.strptime(foundCompetition["date"],
+def book(competition, club):
+    found_club = [c for c in clubs if c['name'] == club][0]
+    found_competition = [c for c in competitions if c['name'] == competition][0]
+    if found_club and found_competition:
+        possible_places = min(int(found_club['points']), 12)
+        comp_time = datetime.strptime(found_competition["date"],
                                       "%Y-%m-%d %H:%M:%S")
         now = datetime.now()
         available = comp_time >= now
-        foundCompetition["available"] = available
-        return render_template('booking.html',
-                               club=foundClub, possible_places=possible_places,
-                               competition=foundCompetition)
+        found_competition["available"] = available
+        if not available:
+            return "Sorry, that competition has passed."
+        else:
+            return render_template('booking.html', club=found_club, 
+                                   competition=found_competition,
+                                   possible_places=possible_places)
     else:
         flash("Something went wrong-please try again")
-        return render_template('welcome.html', club=club, clubs=clubs, competitions=competitions)
+        return render_template('welcome.html', club=club, clubs=clubs,
+                               competitions=competitions)
 
 
 @app.route('/purchasePlaces',methods=['POST'])

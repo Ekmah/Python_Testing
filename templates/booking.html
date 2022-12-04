@@ -6,7 +6,6 @@
 </head>
 <body>
     <h2>{{competition['name']}}</h2>
-    {% if competition['available'] %}
     Places available: {{competition['numberOfPlaces']}}
     <form action="/purchasePlaces" method="post">
         <input type="hidden" name="club" value="{{club['name']}}">
@@ -15,8 +14,5 @@
         <input type="number" name="places" id="places" min="0" max="{{possible_places}}"/>
         <button type="submit">Book</button>
     </form>
-    {% else %}
-    <h3>This competition has passed. You cannot book any places for it.</h3>
-    {% endif %}
 </body>
 </html>
