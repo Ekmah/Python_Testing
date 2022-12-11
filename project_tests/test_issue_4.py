@@ -4,20 +4,10 @@ from project_tests.conftest import *
 class TestIssue4:
 
     @staticmethod
-    def assertions(before_points, after_points, before_places,
-                   after_places):
+    def assertions(before_places, after_places):
         before_places = int(before_places)
         after_places = int(after_places)
-        before_points = int(before_points)
-        after_points = int(after_points)
-        asserts = (
-            ((before_places - after_places) == (before_points - after_points)),
-            # if false, compets and clubs have not been deduced the same number
-            ((before_places - after_places) == (before_points - after_points)
-             and (before_places - after_places) <= 12),
-            # if false, more than 12 places/points have been used
-        )
-        return asserts
+        assert (before_places - after_places) <= 12
 
     def test_correct_amount(self, client):
         route = "/purchasePlaces"
@@ -32,14 +22,10 @@ class TestIssue4:
             "places": chosen_points,
         })
         after_places = competitions[1]["numberOfPlaces"]
-        after_points = clubs[1]["points"]
-
-        assert self.assertions(before_points, after_points, before_places,
-                               after_places)
+        self.assertions(before_places, after_places)
 
     def test_more_than_12(self, client):
         route = "/purchasePlaces"
-        before_points = clubs[1]["points"]
         before_places = competitions[1]["numberOfPlaces"]
         chosen_points = 13
         response = client.post(route, data={
@@ -48,7 +34,4 @@ class TestIssue4:
             "places": chosen_points,
         })
         after_places = competitions[1]["numberOfPlaces"]
-        after_points = clubs[1]["points"]
-
-        assert self.assertions(before_points, after_points, before_places,
-                               after_places)
+        self.assertions(before_places, after_places)
