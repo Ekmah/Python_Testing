@@ -6,7 +6,14 @@ from project_tests.conftest import *
 from server import book
 
 
-class TestIssue1:
+def test_index(client):
+    route = "/"
+    response = client.get(route)
+    assert response.status_code == 200
+
+
+class TestShowSummary:
+
     def test_not_email(self, client):
         email = "aaaaaaaaaa"
         route = "/showSummary"
@@ -15,6 +22,7 @@ class TestIssue1:
         })
         assertion = \
             b"Sorry, that email wasn't found."
+        assert response.status_code == 200
         assert response.data == assertion
 
     def test_wrong_email(self, client):
@@ -25,6 +33,7 @@ class TestIssue1:
         })
         assertion = \
             b"Sorry, that email wasn't found."
+        assert response.status_code == 200
         assert response.data == assertion
 
     def test_good_email(self, client):
@@ -43,10 +52,11 @@ class TestIssue1:
         })
         assertion = \
             b"Sorry, that email wasn't found."
+        assert response.status_code == 200
         assert response.data == assertion
 
 
-class TestIssue2:
+class TestPurchasePlaces:
 
     def test_more_than_available_points(self, client):
         route = "/purchasePlaces"
@@ -59,6 +69,7 @@ class TestIssue2:
         })
         assertion = \
             b'You are trying to book an impossible quantity of places.'
+        assert resp.status_code == 200
         assert resp.data == assertion
 
     def test_more_than_available_places(self, client):
@@ -72,6 +83,20 @@ class TestIssue2:
         })
         assertion = \
             b'You are trying to book an impossible quantity of places.'
+        assert resp.status_code == 200
+        assert resp.data == assertion
+
+    def test_more_than_12(self, client):
+        route = "/purchasePlaces"
+        chosen_points = 13
+        resp = client.post(route, data={
+            "club": clubs[0]["name"],
+            "competition": competitions[3]["name"],
+            "places": chosen_points,
+        })
+        assertion = \
+            b'You are trying to book an impossible quantity of places.'
+        assert resp.status_code == 200
         assert resp.data == assertion
 
     def test_correct_amount(self, client):
@@ -90,6 +115,7 @@ class TestIssue2:
         after_places = int(competitions[1]["numberOfPlaces"])
         after_points = int(clubs[1]["points"])
 
+        assert resp.status_code == 200
         assert ((before_places - after_places) <= before_points or
                 (before_places - after_places) <= 12)
         assert (before_places - after_places) == chosen_points
@@ -108,6 +134,7 @@ class TestIssue2:
         })
         assertion = \
             b'You are trying to book an impossible quantity of places.'
+        assert resp.status_code == 200
         assert resp.data == assertion
 
     def test_negative_amount(self, client):
@@ -120,16 +147,18 @@ class TestIssue2:
         })
         assertion = \
             b'You are trying to book an impossible quantity of places.'
+        assert resp.status_code == 200
         assert resp.data == assertion
 
 
-class TestIssue5:
+class TestBook:
 
     def test_future_competition_date(self, client):
         competition = competitions[2]["name"]
         club = clubs[1]["name"]
 
         resp = client.get(f"/book/{competition}/{club}")
+        assert resp.status_code == 200
         assert resp.data != b'Sorry, that competition has passed.'
 
     def test_past_competition_date(self, client):
@@ -137,6 +166,32 @@ class TestIssue5:
         club = clubs[1]["name"]
 
         resp = client.get(f"/book/{competition}/{club}")
+        assert resp.status_code == 200
         assert resp.data == b'Sorry, that competition has passed.'
 
+    def test_possible_places_points(self, client):
+        competition = competitions[2]["name"]  # places are 13
+        club = clubs[1]["name"]  # points are 4
 
+        resp = client.get(f"/book/{competition}/{club}")
+        assert resp.status_code == 200
+        assert resp.data != b'Sorry, that competition has passed.'
+        assert b"max='4'" in resp.data
+
+    def test_possible_places_12(self, client):
+        competition = competitions[2]["name"]  # places are 13
+        club = clubs[0]["name"]  # points is 13
+
+        resp = client.get(f"/book/{competition}/{club}")
+        assert resp.status_code == 200
+        assert resp.data != b'Sorry, that competition has passed.'
+        assert b"max='12'" in resp.data
+
+    def test_possible_places_places(self, client):
+        competition = competitions[4]["name"]  # places are 3
+        club = clubs[0]["name"]  # points is 13
+
+        resp = client.get(f"/book/{competition}/{club}")
+        assert resp.status_code == 200
+        assert resp.data != b'Sorry, that competition has passed.'
+        assert b"max='3'" in resp.data

@@ -57,7 +57,6 @@ def book(competition, club):
                                       "%Y-%m-%d %H:%M:%S")
         now = datetime.now()
         available = comp_time >= now
-        found_competition["available"] = available
         if not available:
             return "Sorry, that competition has passed."
         else:

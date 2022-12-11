@@ -14,6 +14,16 @@
             "name": "Fall Classic 2023",
             "date": "2023-10-22 13:30:00",
             "numberOfPlaces": "13"
+        },
+        {
+            "name": "Summer Classic 2023",
+            "date": "2023-10-22 13:30:00",
+            "numberOfPlaces": "23"
+        },
+        {
+            "name": "Winter Classic 2023",
+            "date": "2023-10-22 13:30:00",
+            "numberOfPlaces": "3"
         }
     ]
 }
