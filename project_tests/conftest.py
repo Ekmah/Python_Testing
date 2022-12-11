@@ -1,7 +1,4 @@
 import pytest
-import json
-import os
-from flask import Flask
 from server import app, competitions, clubs
 
 

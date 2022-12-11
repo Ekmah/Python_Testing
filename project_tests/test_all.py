@@ -1,9 +1,4 @@
-import json
-import os
-from datetime import datetime
-from flask import session
 from project_tests.conftest import *
-from server import book
 
 
 def test_index(client):
@@ -42,7 +37,10 @@ class TestShowSummary:
         response = client.post(route, data={
             "email": email,
         })
+        assertion = \
+            b"Sorry, that email wasn't found."
         assert response.status_code == 200
+        assert response.data != assertion
 
     def test_other_type(self, client):
         email = 1
@@ -54,6 +52,52 @@ class TestShowSummary:
             b"Sorry, that email wasn't found."
         assert response.status_code == 200
         assert response.data == assertion
+
+
+class TestBook:
+
+    def test_future_competition_date(self, client):
+        competition = competitions[2]["name"]
+        club = clubs[1]["name"]
+
+        resp = client.get(f"/book/{competition}/{club}")
+        assert resp.status_code == 200
+        assert resp.data != b'Sorry, that competition has passed.'
+
+    def test_past_competition_date(self, client):
+        competition = competitions[1]["name"]
+        club = clubs[1]["name"]
+
+        resp = client.get(f"/book/{competition}/{club}")
+        assert resp.status_code == 200
+        assert resp.data == b'Sorry, that competition has passed.'
+
+    def test_possible_places_points(self, client):
+        competition = competitions[2]["name"]  # places are 13
+        club = clubs[1]["name"]  # points are 4
+
+        resp = client.get(f"/book/{competition}/{club}")
+        assert resp.status_code == 200
+        assert resp.data != b'Sorry, that competition has passed.'
+        assert b"max='4'" in resp.data
+
+    def test_possible_places_12(self, client):
+        competition = competitions[2]["name"]  # places are 13
+        club = clubs[0]["name"]  # points is 13
+
+        resp = client.get(f"/book/{competition}/{club}")
+        assert resp.status_code == 200
+        assert resp.data != b'Sorry, that competition has passed.'
+        assert b"max='12'" in resp.data
+
+    def test_possible_places_places(self, client):
+        competition = competitions[4]["name"]  # places are 3
+        club = clubs[0]["name"]  # points is 13
+
+        resp = client.get(f"/book/{competition}/{club}")
+        assert resp.status_code == 200
+        assert resp.data != b'Sorry, that competition has passed.'
+        assert b"max='3'" in resp.data
 
 
 class TestPurchasePlaces:
@@ -149,49 +193,3 @@ class TestPurchasePlaces:
             b'You are trying to book an impossible quantity of places.'
         assert resp.status_code == 200
         assert resp.data == assertion
-
-
-class TestBook:
-
-    def test_future_competition_date(self, client):
-        competition = competitions[2]["name"]
-        club = clubs[1]["name"]
-
-        resp = client.get(f"/book/{competition}/{club}")
-        assert resp.status_code == 200
-        assert resp.data != b'Sorry, that competition has passed.'
-
-    def test_past_competition_date(self, client):
-        competition = competitions[1]["name"]
-        club = clubs[1]["name"]
-
-        resp = client.get(f"/book/{competition}/{club}")
-        assert resp.status_code == 200
-        assert resp.data == b'Sorry, that competition has passed.'
-
-    def test_possible_places_points(self, client):
-        competition = competitions[2]["name"]  # places are 13
-        club = clubs[1]["name"]  # points are 4
-
-        resp = client.get(f"/book/{competition}/{club}")
-        assert resp.status_code == 200
-        assert resp.data != b'Sorry, that competition has passed.'
-        assert b"max='4'" in resp.data
-
-    def test_possible_places_12(self, client):
-        competition = competitions[2]["name"]  # places are 13
-        club = clubs[0]["name"]  # points is 13
-
-        resp = client.get(f"/book/{competition}/{club}")
-        assert resp.status_code == 200
-        assert resp.data != b'Sorry, that competition has passed.'
-        assert b"max='12'" in resp.data
-
-    def test_possible_places_places(self, client):
-        competition = competitions[4]["name"]  # places are 3
-        club = clubs[0]["name"]  # points is 13
-
-        resp = client.get(f"/book/{competition}/{club}")
-        assert resp.status_code == 200
-        assert resp.data != b'Sorry, that competition has passed.'
-        assert b"max='3'" in resp.data
