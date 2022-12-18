@@ -1,5 +1,5 @@
 import pytest
-from server import app, competitions, clubs
+from server import app, competitions, clubs, load_clubs, load_competitions
 
 
 @pytest.fixture()

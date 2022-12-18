@@ -1,6 +1,18 @@
 from project_tests.conftest import *
 
 
+def test_load_clubs():
+    results = load_clubs()
+    assert isinstance(results, list)
+    assert isinstance(results[0], dict)
+
+
+def test_load_competitions():
+    results = load_competitions()
+    assert isinstance(results, list)
+    assert isinstance(results[0], dict)
+
+
 def test_index(client):
     route = "/"
     response = client.get(route)
