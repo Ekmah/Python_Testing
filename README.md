@@ -49,3 +49,14 @@
     We also like to show how well we're testing, so there's a module called 
     [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
 
+# gudlift tests
+
+1: Setup is identical as the setup for the normal project. All test libs are in the requirements.txt.
+   - Look for this README's <gudlift-registration 3. Installation> section for the installation instructions
+
+2: Launch app:
+   - if the <code>flask run</code> command does not work, please try the <code>$env:FLASK_APP = "server.py"</code> command first.
+
+3: Launch tests with the <code>pytest project_tests</code> command. 
+   - To do coverage, please use <code>coverage run -m pytest project_tests</code>
+then <code>coverage report</code> to see the coverage.
