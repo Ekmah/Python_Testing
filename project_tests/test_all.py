@@ -16,7 +16,7 @@ def test_integration(client):
     client.get(f"/book/{competition['name']}/{club['name']}")
 
     before_points = int(club["points"])
-    # chose valid amount of points:
+    # choose valid amount of points:
     if before_points == 0:
         chosen_points = 0
     else:
