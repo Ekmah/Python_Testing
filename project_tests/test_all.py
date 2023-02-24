@@ -1,6 +1,35 @@
 from project_tests.conftest import *
 
 
+def test_integration(client):
+    clubs_l = load_clubs()
+    competitions_l = load_competitions()
+
+    client.get("/")
+
+    competition = competitions_l[2]
+    club = clubs_l[1]
+
+    email = club['email']
+    client.post("/showSummary", data={"email": email})
+
+    client.get(f"/book/{competition['name']}/{club['name']}")
+
+    before_points = int(club["points"])
+    # chose valid amount of points:
+    if before_points == 0:
+        chosen_points = 0
+    else:
+        chosen_points = 1
+    client.post("/purchasePlaces", data={
+        "club": club["name"],
+        "competition": competition["name"],
+        "places": chosen_points,
+    })
+
+    client.get('/logout')
+
+
 def test_load_clubs():
     results = load_clubs()
     assert isinstance(results, list)
